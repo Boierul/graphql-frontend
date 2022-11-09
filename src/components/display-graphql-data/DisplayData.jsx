@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import Preloader from "../../preloader/Preloader";
 import './DisplayData.css'
 
-import {useQuery, useLazyQuery, gql} from "@apollo/client";
+import {useQuery, useLazyQuery, gql, useMutation} from "@apollo/client";
 
 const QUERY_ALL_USERS = gql`
     query GetAllUsers {
@@ -20,43 +20,54 @@ const QUERY_ALL_USERS = gql`
 const QUERY_ALL_MOVIES = gql`
     query GetAllMovies {
         movies {
-            title,
+            title
             year
         }
     }
 `;
 
-// Changed the name of the query because of GraphQL
 const GET_MOVIE_BY_NAME = gql`
+    # Changed the name of the query because of GraphQL
     query Movie($title : String!) {
         movie(title : $title) {
-            title,
+            title
             year
         }
     }
 `
 
-const CREATE_USER = gql`
+const CREATE_USER_MUTATION = gql`
     mutation CreateUser($input: CreateUserInput!) {
         createUser(input: $input) {
-            id,
-            name,
+            name
             age
+            username
+            nationality
         }
     }
 `
 
 function DisplayData() {
-    const {data: userData, loading, error: userError} = useQuery(QUERY_ALL_USERS)
+    const {data: userData, loading, error: userError, refetch} = useQuery(QUERY_ALL_USERS)
     const {data: movieData} = useQuery(QUERY_ALL_MOVIES)
 
     // Grab info from the query. [] -> inside comes a func , {} -> what we want to grab from that func
     const [fetchMovie, {data: movieSearchedData, error: movieError}] = useLazyQuery(GET_MOVIE_BY_NAME)
 
-    const [movieSearched, setMovieSearched] = useState("");
+    const [movieSearched, setMovieSearched] = useState("")
 
-    if (loading) return <Preloader/>;
-    if (userError) return `Error while fetching user data: ${userError}`;
+    // Create user states
+    // TODO improve state management via useReducer hook
+    // TODO change input nationality a dropbox box - include the list of all countries in FakeData.js from server
+    const [name, setName] = useState("")
+    const [username, setUsername] = useState("")
+    const [age, setAge] = useState(0)
+    const [nationality, setNationality] = useState("")
+
+    const [createUser] = useMutation(CREATE_USER_MUTATION)
+
+    if (loading) return <Preloader/>
+    if (userError) return `Error while fetching user data: ${userError}`
     if (movieError) console.log(movieError)
 
 
@@ -120,24 +131,49 @@ function DisplayData() {
 
                 <br/><br/>
 
-                <div>
+                <div className="create-user-section">
                     <input
                         type="text"
                         placeholder="Enter your name"
+                        onChange={(event) => {
+                            setName(event.target.value);
+                        }}
                     />
                     <input
                         type="text"
                         placeholder="Enter a username"
+                        onChange={(event) => {
+                            setUsername(event.target.value);
+                        }}
                     />
                     <input
                         type="number"
                         placeholder="Enter your age"
+                        onChange={(event) => {
+                            setAge(event.target.value);
+                        }}
                     />
                     <input
                         type="text"
                         placeholder="Indicate your nationality"
+                        onChange={(event) => {
+                            setNationality(event.target.value);
+                        }}
                     />
-                    <button>
+                    <button onClick={() => {
+                        console.log(name, username,age,nationality)
+
+                        createUser({
+                            variables: {
+                                input: {
+                                    name,
+                                    username,
+                                    age: Number(age),
+                                    nationality }
+                            }
+                        })
+                        refetch()
+                    }}>
                         Create User
                     </button>
                 </div>
