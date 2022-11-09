@@ -1,6 +1,6 @@
 import './App.css';
 import {ApolloClient, InMemoryCache, ApolloProvider} from "@apollo/client";
-import DisplayData from "./components/DisplayData";
+import DisplayData from "./components/display-graphql-data/DisplayData";
 
 function App() {
     const client = new ApolloClient({

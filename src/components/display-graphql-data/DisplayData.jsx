@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
+
+import Preloader from "../../preloader/Preloader";
+import './DisplayData.css'
+
 import {useQuery, useLazyQuery, gql} from "@apollo/client";
-import Preloader from "../preloader/Preloader";
 
 const QUERY_ALL_USERS = gql`
     query GetAllUsers {
@@ -58,20 +61,18 @@ function DisplayData() {
 
 
     return (
-        <>
-            <div>
-                <h1>User list:</h1>
-                <div style={{fontSize: 10, color: "rebeccapurple", paddingBottom: "40px"}}>
-                    {userData &&
-                        userData.users.map((user) => {
-                            return <h2
-                                style={{border: "1px solid black", padding: "5px"}}>Username: {user?.username}
-                            </h2>
-                        })}
-                </div>
+        <div className="full-section">
+            <h1>User list:</h1>
+            <div className="user-section">
+                {userData &&
+                    userData.users.map((user) => {
+                        return <h2 className="user-section-return-names">
+                            Username: {user?.username}
+                        </h2>
+                    })}
             </div>
 
-            <div style={{paddingTop: "20px"}}>
+            <div className="movie-section">
 
                 <h1> Available movies:
                     {movieData ?
@@ -80,25 +81,14 @@ function DisplayData() {
                         }) : "Nothing here"}
                 </h1>
 
-                <div style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    flexFlow: "column",
-                    width: "200px",
-                    gap: "1rem"
-                }}>
-                    <div style={{border: "1px solid black", width: "100vw"}}>
+                <div className="movie-section-main">
+                    <div className="movie-section-input">
                         <input
                             type="text"
                             placeholder="Movie Title..."
                             onChange={(event) => {
                                 console.log(event.target.value)
                                 setMovieSearched(event.target.value);
-                            }}
-                            style={{
-                                border: "none",
-                                width: "100vw",
-                                borderStyle: "none"
                             }}
                         />
                     </div>
@@ -111,7 +101,7 @@ function DisplayData() {
                             }
                         })
                     }}>
-                        Fetch Movie Data
+                        <span> Fetch Movie Data </span>
                     </button>
                 </div>
                 <br/>
@@ -127,8 +117,33 @@ function DisplayData() {
                     {movieError &&
                         <h1 style={{color: movieError ? "red" : "black"}}>There was an error while fetching </h1>}
                 </div>
+
+                <br/><br/>
+
+                <div>
+                    <input
+                        type="text"
+                        placeholder="Enter your name"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Enter a username"
+                    />
+                    <input
+                        type="number"
+                        placeholder="Enter your age"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Indicate your nationality"
+                    />
+                    <button>
+                        Create User
+                    </button>
+                </div>
             </div>
-        </>
+
+        </div>
     );
 }
 
