@@ -47,7 +47,27 @@ const CREATE_USER_MUTATION = gql`
     }
 `
 
-function DisplayData() {
+const UPDATE_USER_USERNAME = gql`
+    mutation UpdateUsername($input: UpdateUsernameInput!) {
+        updateUsername(input: $input) {
+            id
+            username
+        }
+    }
+`
+
+const DELETE_USER = gql`
+    mutation DeleteUser($deleteUserId: ID!) {
+        deleteUser(id: $deleteUserId) {
+            id
+        }
+    }
+`
+
+
+    function
+DisplayData()
+{
     const {data: userData, loading, error: userError, refetch} = useQuery(QUERY_ALL_USERS)
     const {data: movieData} = useQuery(QUERY_ALL_MOVIES)
 
@@ -63,8 +83,17 @@ function DisplayData() {
     const [username, setUsername] = useState("")
     const [age, setAge] = useState(0)
     const [nationality, setNationality] = useState("")
-
     const [createUser] = useMutation(CREATE_USER_MUTATION)
+
+    // Update user username
+    const [userId, setUserId] = useState(0)
+    const [userUsername, setUserUsername] = useState("")
+    const [updateUsername] = useMutation(UPDATE_USER_USERNAME)
+
+    // Delete an user
+    const [deleteUserId, setDeleteUserId] = useState(0)
+    const [deleteUser] = useMutation(DELETE_USER)
+
 
     if (loading) return <Preloader/>
     if (userError) return `Error while fetching user data: ${userError}`
@@ -78,14 +107,14 @@ function DisplayData() {
                 {userData &&
                     userData.users.map((user) => {
                         return <h2 className="user-section-return-names">
-                            Username: {user?.username}
+                            ID: {user?.id}; Username: {user?.username};
                         </h2>
                     })}
             </div>
 
             <div className="movie-section">
 
-                <h1> Available movies:
+                <h1> Available movies
                     {movieData ?
                         movieData.movies.map((movie) => {
                             return <h5 style={{fontSize: "15px", padding: "1rem"}}>{movie.title} </h5>
@@ -132,6 +161,8 @@ function DisplayData() {
                 <br/><br/>
 
                 <div className="create-user-section">
+                    <h1>Add an user</h1>
+
                     <input
                         type="text"
                         placeholder="Enter your name"
@@ -157,25 +188,107 @@ function DisplayData() {
                         type="text"
                         placeholder="Indicate your nationality"
                         onChange={(event) => {
-                            setNationality(event.target.value);
+                            const countryToUppercase = event.target.value.toUpperCase()
+                            setNationality(countryToUppercase)
                         }}
                     />
-                    <button onClick={() => {
-                        console.log(name, username,age,nationality)
 
-                        createUser({
-                            variables: {
-                                input: {
-                                    name,
-                                    username,
-                                    age: Number(age),
-                                    nationality }
-                            }
-                        })
-                        refetch()
-                    }}>
-                        Create User
-                    </button>
+                    <div className="create-user-section-button">
+                        <button onClick={() => {
+                            console.log(name, username, age, nationality)
+
+                            createUser({
+                                variables: {
+                                    input: {
+                                        name,
+                                        username,
+                                        age: Number(age),
+                                        nationality
+                                    }
+                                }
+                            })
+                            // In order to re-fetch the data for a responsive UI and improved UX
+                            refetch()
+
+                        }}>
+                            Create User
+                        </button>
+                    </div>
+                </div>
+
+                <div className="update-user-username-section">
+                    <h1>Edit an user's username</h1>
+
+                    <div className="update-user-username-input">
+                        <input
+                            type="number"
+                            placeholder="Enter your id to change the username"
+                            onChange={(event) => {
+                                setUserId(event.target.value);
+                            }}
+                        />
+
+                        <input
+                            type="text"
+                            placeholder="Enter your new username"
+                            onChange={(event) => {
+                                setUserUsername(event.target.value);
+                            }}
+                        />
+                    </div>
+
+                    <div className="update-user-username-button">
+                        <button onClick={() => {
+                            console.log(userId, userUsername)
+                            updateUsername({
+                                variables: {
+                                    input: {
+                                        id: Number(userId),
+                                        newUsername: String(userUsername)
+                                    }
+                                }
+                            })
+
+
+                            refetch()
+
+                        }}>
+                            Update User
+                        </button>
+                    </div>
+
+
+                </div>
+
+                <div className="delete-user-section">
+                    <h1>Delete an user</h1>
+
+                    <div className="delete-user-section-input">
+                        <input
+                            type="number"
+                            placeholder="Enter your id to delete the user"
+                            onChange={(event) => {
+                                setDeleteUserId(event.target.value);
+                            }}
+                        />
+                    </div>
+
+                    <div className="delete-user-section-button">
+                        <button onClick={() => {
+                            console.log(deleteUserId)
+                            deleteUser({
+                                variables: {
+                                    deleteUserId: Number(deleteUserId)
+                                }
+                            })
+
+
+                            refetch()
+
+                        }}>
+                            Delete User
+                        </button>
+                    </div>
                 </div>
             </div>
 

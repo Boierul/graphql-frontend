@@ -27,6 +27,47 @@
     width: 100vw;
 }
 
+.create-user-section {
+    border: rebeccapurple 1px solid;
+    display: flex;
+    justify-content: left;
+    align-content: center;
+    flex-wrap: wrap;
+    padding: 20px 0px 0px 20px;
+}
+
+.create-user-section-button {
+    padding: 20px 0px;
+}
+
+.update-user-username-section {
+    margin: 20px 0px;
+    padding: 20px 0px 0px 20px;
+    border: rebeccapurple 1px solid;
+    display: flex;
+    justify-content: left;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+.update-user-username-button {
+    padding: 20px 0px;
+}
+
+.delete-user-section {
+    margin: 20px 0px;
+    padding: 20px 0px 0px 20px;
+    border: rebeccapurple 1px solid;
+    display: flex;
+    justify-content: left;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+.delete-user-section-button {
+    padding: 20px 0px;
+}
+
 input {
     border: none;
     width: 100vw;
@@ -87,3 +128,4 @@ button:hover::before {
 button span {
     z-index: 1;
 }
+
